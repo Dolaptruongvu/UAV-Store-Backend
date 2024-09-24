@@ -30,7 +30,7 @@ app.use(
     origin: [
       "http://127.0.0.1:3000",
       "https://uav-store-front-end-3nae-nn5s4pl9e-dolaptruongvus-projects.vercel.app",
-      "https://uav-store-front-end-6jk6.vercel.app/",
+      "https://uav-store-front-end-6jk6.vercel.app",
     ],
     credentials: true,
   })
