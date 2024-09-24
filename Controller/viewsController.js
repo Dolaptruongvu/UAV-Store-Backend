@@ -2,10 +2,15 @@ const Product = require("../Model/productModel"); // Import the Product model
 const Bill = require("../Model/billModel");
 const { catchAsync } = require("../utils/catchAsync"); // Import catchAsync helper
 const Customer = require("../Model/customerModel");
+const { Op } = require("sequelize");
 
 exports.getOverview = catchAsync(async (req, res, next) => {
-  const famousProducts = await Product.find({ ratings: { $gte: 4.7 } });
-  const specialOffer = await Product.find({ price: { $lte: 10 } });
+  const famousProducts = await Product.findAll({
+    where: { ratings: { [Op.gte]: 4.7 } },
+  });
+  const specialOffer = await Product.findAll({
+    where: { price: { [Op.lte]: 10 } },
+  });
 
   res.status(200).render("index", {
     famousProducts, // Pass the products data to the template
@@ -13,7 +18,7 @@ exports.getOverview = catchAsync(async (req, res, next) => {
   });
 });
 
-//login  page
+//login page
 exports.getLogin = catchAsync(async (req, res, next) => {
   if (res.locals?.customer) {
     res.redirect("/");
@@ -24,9 +29,8 @@ exports.getLogin = catchAsync(async (req, res, next) => {
   });
 });
 
-//signup  page
+//signup page
 exports.getSignup = catchAsync(async (req, res, next) => {
-  const user = res.locals?.customer;
   if (res.locals?.customer) {
     res.redirect("/");
     return;
@@ -41,17 +45,18 @@ exports.filteredProducts = catchAsync(async (req, res, next) => {
 
   const categoriesQuery = Object.entries(req.query)
     .filter((item) => item[0].search("categories-") > -1)
-    .map((item) => item[1]); /// [[key, value],...]
+    .map((item) => item[1]);
 
   let query = {};
 
   // category
   if (categoriesQuery.length > 0) {
-    query = { category: { $in: categoriesQuery } }; // Use $in to match any of the categories
+    query = { category: { [Op.in]: categoriesQuery } };
     categoriesQuery.forEach((item, index) => {
       queryUrl.append("categories-" + index, item);
     });
   }
+
   // date
   if (date) {
     query = {
@@ -62,31 +67,36 @@ exports.filteredProducts = catchAsync(async (req, res, next) => {
   }
 
   if (!!s) {
-    query = { ...query, name: { $regex: s } };
+    query = { ...query, name: { [Op.like]: `%${s}%` } };
     queryUrl.append("s", s);
   }
 
-  /// pagination
+  // pagination
   const limit = 12;
   let page = 1;
-  // page
   if (p && !isNaN(Number(p))) {
     page = Number(p);
   }
 
-  const products = await Product.find(query, undefined, {
+  const products = await Product.findAll({
+    where: query,
     limit,
-    skip: (page - 1) * limit,
-  }); // Find products matching the query
-  const totalRecords = await Product.countDocuments(query);
-  const totalPage = Math.floor(totalRecords / limit) + 1;
+    offset: (page - 1) * limit,
+  });
+
+  const totalRecords = await Product.count({
+    where: query,
+  });
+
+  const totalPage = Math.ceil(totalRecords / limit);
   const currentQueryUrlString = !queryUrl.toString().trim()
     ? "?="
     : queryUrl.toString();
   const previousPage =
-    page === 1 ? null : currentQueryUrlString + "&p=" + (page - 1);
+    page === 1 ? null : `${currentQueryUrlString}&p=${page - 1}`;
   const nextPage =
-    page === totalPage ? null : currentQueryUrlString + "&p=" + (page + 1);
+    page === totalPage ? null : `${currentQueryUrlString}&p=${page + 1}`;
+
   res.status(200).render("product-filter", {
     products,
     pagination: {
@@ -101,7 +111,9 @@ exports.filteredProducts = catchAsync(async (req, res, next) => {
 
 // show shipping bills
 exports.getShipBills = catchAsync(async (req, res, next) => {
-  const bills = await Bill.find({ shipper: req.customer.id });
+  const bills = await Bill.findAll({
+    where: { shipperId: req.customer.id },
+  });
 
   res.status(200).render("", {
     bills,
@@ -117,24 +129,17 @@ exports.getProfile = catchAsync(async (req, res, next) => {
     res.redirect("/login?r=/profile");
     return;
   }
-  const filter =
-    user.role === "user"
-      ? {
-          customer: {
-            _id: user._id,
-          },
-        }
-      : {
-          shipper: {
-            _id: user._id,
-          },
-        };
 
-  const listBills = await Bill.find(filter);
+  const filter =
+    user.role === "user" ? { customerId: user.id } : { shipperId: user.id };
+
+  const listBills = await Bill.findAll({ where: filter });
 
   const products = [];
   if (name && page === "edit") {
-    const productsDb = await Product.find({ name: { $regex: name } });
+    const productsDb = await Product.findAll({
+      where: { name: { [Op.like]: `%${name}%` } },
+    });
     productsDb.forEach((product) => {
       products.push(product);
     });
@@ -148,11 +153,10 @@ exports.getProfile = catchAsync(async (req, res, next) => {
 
 //Product Detail
 exports.getProductDetail = catchAsync(async (req, res, next) => {
-  const { productId } = req.params; // Adjust to your logic
-  const product = await Product.findById(productId); // Adjust to your logic
+  const { productId } = req.params;
+  const product = await Product.findByPk(productId);
   res.status(200).render("product-detail", {
-    // Rendering
-    product, // Adjust to your logic
+    product,
   });
 });
 
@@ -162,48 +166,43 @@ exports.getCart = catchAsync(async (req, res, next) => {
   const prods = Object.entries(req.cookies)
     .filter((item) => item[0].search("cart-") > -1)
     .reduce((pre, curr) => {
-      if (Number(curr[1]) <= 0) {
-        return pre;
-      }
+      if (Number(curr[1]) <= 0) return pre;
       return {
         ...pre,
         [curr[0].split("-")[1]]: Number(curr[1]),
       };
     }, {});
 
-  const listProducts = await Product.find({ _id: { $in: Object.keys(prods) } });
+  const listProducts = await Product.findAll({
+    where: { id: { [Op.in]: Object.keys(prods) } },
+  });
+
   const totalPrice = listProducts.reduce(
     (pre, curr) => pre + Number(curr.price) * prods[curr.id],
     0
   );
 
   res.status(200).render("cart-item", {
-    // Rendering
-    products: listProducts.map((item) => {
-      return {
-        ...item.toJSON(),
-        userQuantity: prods[item.id],
-        totalPrice: prods[item.id] * item.price,
-      };
-    }), // Adjust to your logic
+    products: listProducts.map((item) => ({
+      ...item.toJSON(),
+      userQuantity: prods[item.id],
+      totalPrice: prods[item.id] * item.price,
+    })),
     totalPrice,
   });
 });
 
 //getContracts
 exports.getContracts = (req, res, next) => {
-  res.status(200).render("contact"); // Rendering
+  res.status(200).render("contact");
 };
 
 //getContracts
 exports.getSuccess = catchAsync(async (req, res, next) => {
   const billId = req.params.billId;
+  const bill = await Bill.findByPk(billId);
 
-  const bill = await Bill.findById(billId);
-
-  const customer = res.locals.customer;
-  // const user = await Customer.findById()
   res.status(200).render("success", {
     bill,
-  }); // Rendering
+  });
 });
