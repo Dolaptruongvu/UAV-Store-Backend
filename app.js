@@ -8,14 +8,13 @@ const customerRoutes = require("./Routes/customerRoutes");
 const reviewRoutes = require("./Routes/reviewRoutes");
 const billRoutes = require("./Routes/billRoutes");
 const globalErrorHandler = require("./Controller/errorController");
-const viewRouter = require("./Routes/viewsRoutes");
 const cors = require("cors");
 // app area
 const app = express();
 app.enable("trust proxy");
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "ejs");
+// app.set("views", path.join(__dirname, "views"));
 
 //Body parser, reading data from body into rq.body
 
@@ -55,9 +54,6 @@ app.use("/api/v1/customer", customerRoutes);
 
 // Review routes
 app.use("/api/v1/reviews", reviewRoutes);
-
-// View router
-app.use("/", viewRouter);
 
 // Test router
 app.use("/test", (req, res) => {
