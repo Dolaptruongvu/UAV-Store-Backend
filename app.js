@@ -27,7 +27,10 @@ app.use(morgan("common"));
 
 app.use(
   cors({
-    origin: ["http://127.0.0.1:3000"],
+    origin: [
+      "http://127.0.0.1:3000",
+      "https://uav-store-front-end-3nae-nn5s4pl9e-dolaptruongvus-projects.vercel.app",
+    ],
     credentials: true,
   })
 );
