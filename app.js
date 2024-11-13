@@ -29,6 +29,9 @@ app.use(
   cors({
     origin: [
       "http://127.0.0.1:3000",
+      "http://127.0.0.1:5000",
+      "http://localhost:3000",
+      "http://localhost:5000",
       "https://uav-store-front-end-3nae-nn5s4pl9e-dolaptruongvus-projects.vercel.app",
       "https://uav-store-front-end-6jk6.vercel.app",
     ],
