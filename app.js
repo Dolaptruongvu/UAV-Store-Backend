@@ -1,30 +1,30 @@
+// app.js
 const express = require("express");
-var morgan = require("morgan");
+const morgan = require("morgan");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const AppError = require("./utils/appError");
+const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpecs = require("./swagger");
+
 const productRoutes = require("./Routes/productRoutes");
 const customerRoutes = require("./Routes/customerRoutes");
 const reviewRoutes = require("./Routes/reviewRoutes");
 const billRoutes = require("./Routes/billRoutes");
 const globalErrorHandler = require("./Controller/errorController");
-const cors = require("cors");
-// app area
+
 const app = express();
 app.enable("trust proxy");
 
-// app.set("view engine", "ejs");
-// app.set("views", path.join(__dirname, "views"));
-
-//Body parser, reading data from body into rq.body
-
+// Middleware cho body parser và cookie parser
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 
-// morgan use to read the log from middleware
+// Middleware cho morgan để log
 app.use(morgan("common"));
 
+// CORS để cho phép các yêu cầu từ frontend
 app.use(
   cors({
     origin: [
@@ -39,36 +39,80 @@ app.use(
   })
 );
 
-//serving static file
+// Tích hợp Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
+// Middleware để xử lý file tĩnh
 app.use(express.static(path.join(__dirname, "public")));
-// Test middleware
 
-app.use((req, res, next) => {
-  req.requestTimee = new Date().toISOString();
+// Chú thích Swagger cho các route chính
 
-  next();
-});
-
-// Book routes
-
+/**
+ * @swagger
+ * /api/v1/products:
+ *   get:
+ *     summary: Lấy danh sách sản phẩm
+ *     tags:
+ *       - Products
+ *     responses:
+ *       200:
+ *         description: Thành công, trả về danh sách sản phẩm
+ *       500:
+ *         description: Lỗi server
+ */
 app.use("/api/v1/products", productRoutes);
 
-// Bill routes
+/**
+ * @swagger
+ * /api/v1/bill:
+ *   get:
+ *     summary: Lấy danh sách hóa đơn
+ *     tags:
+ *       - Bills
+ *     responses:
+ *       200:
+ *         description: Thành công, trả về danh sách hóa đơn
+ *       500:
+ *         description: Lỗi server
+ */
 app.use("/api/v1/bill", billRoutes);
 
-// User routes
+/**
+ * @swagger
+ * /api/v1/customer:
+ *   get:
+ *     summary: Lấy danh sách khách hàng
+ *     tags:
+ *       - Customers
+ *     responses:
+ *       200:
+ *         description: Thành công, trả về danh sách khách hàng
+ *       500:
+ *         description: Lỗi server
+ */
 app.use("/api/v1/customer", customerRoutes);
 
-// Review routes
+/**
+ * @swagger
+ * /api/v1/reviews:
+ *   get:
+ *     summary: Lấy danh sách đánh giá
+ *     tags:
+ *       - Reviews
+ *     responses:
+ *       200:
+ *         description: Thành công, trả về danh sách đánh giá
+ *       500:
+ *         description: Lỗi server
+ */
 app.use("/api/v1/reviews", reviewRoutes);
 
-// Test router
+// Route test
 app.use("/test", (req, res) => {
   res.json({ statement: "hello bro" });
 });
 
-// Global Error Handling MiddleWare
-
+// Middleware xử lý lỗi toàn cục
 app.use(globalErrorHandler);
 
 module.exports = { app };

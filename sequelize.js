@@ -25,7 +25,7 @@ const sequelize = new Sequelize(databaseName, username, password, {
 });
 
 sequelize
-  .sync({ alter: true }) // Set force: true to drop and recreate the table each time (useful for development)
+  .sync({ alter: true })
   .then(() => {
     console.log("Database & tables are synced !");
   })
