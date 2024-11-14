@@ -22,7 +22,7 @@ Product.init(
           msg: "Product name cannot exceed 100 characters",
         },
       },
-      unique: true
+      unique: true,
     },
     images: {
       type: DataTypes.ARRAY(DataTypes.STRING),
@@ -52,23 +52,23 @@ Product.init(
       allowNull: true,
     },
     dimensions: {
-      type: DataTypes.STRING, // có thể dùng dạng "Dài x Rộng x Cao" hoặc lưu dưới dạng JSON
+      type: DataTypes.STRING,
       allowNull: true,
     },
     batteryLife: {
-      type: DataTypes.STRING, // có thể lưu dưới dạng "30 phút", "1 giờ", v.v.
+      type: DataTypes.STRING,
       allowNull: true,
     },
     range: {
-      type: DataTypes.FLOAT, // khoảng cách hoạt động, ví dụ: 10.5 km
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     maxSpeed: {
-      type: DataTypes.FLOAT, // tốc độ tối đa, ví dụ: 60.0 km/h
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     sensorType: {
-      type: DataTypes.STRING, // loại cảm biến, ví dụ: "LiDAR", "Camera 4K"
+      type: DataTypes.STRING,
       allowNull: true,
     },
     releaseDate: {
@@ -134,16 +134,23 @@ Product.init(
       },
     },
     accessoriesIncluded: {
-      type: DataTypes.ARRAY(DataTypes.STRING), // liệt kê các phụ kiện đi kèm
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
     },
     compatibility: {
-      type: DataTypes.STRING, // lưu thông tin về khả năng tương thích, ví dụ: "Compatible with DJI Mavic"
+      type: DataTypes.STRING,
       allowNull: true,
     },
     type: {
       type: DataTypes.JSONB,
       allowNull: false,
+    },
+    isProminent: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      comment:
+        "Indicates if the product is prominent (e.g., featured or highlighted)",
     },
   },
   {

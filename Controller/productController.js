@@ -103,8 +103,11 @@ exports.setProductUserIds = (req, res, next) => {
 
 exports.top3Products = catchAsync(async (req, res, next) => {
   const products = await Product.findAll({
-    order: [["releaseDate", "DESC"]],
-    limit: 3,
+    where: {
+      isProminent: true, // Chỉ lấy các sản phẩm nổi bật
+    },
+    order: [["releaseDate", "DESC"]], // Sắp xếp theo ngày phát hành mới nhất
+    limit: 3, // Giới hạn số lượng sản phẩm trả về là 3
   });
   res.status(200).json({
     status: "success",
