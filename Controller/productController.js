@@ -8,7 +8,7 @@ const { query } = require("express");
 const path = require("path");
 
 // Cover storage
-const storage = multer.diskStorage({
+/*const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (file.fieldname === "carouselImage") {
       cb(null, "./Public/Img/CarouselImages");
@@ -70,10 +70,11 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     },
   });
 });
+*/
 
-// test create product
 
-exports.createProductTest = handlerFactory.createOne(Product);
+//create product
+exports.createProduct = handlerFactory.createOne(Product);
 
 // Read products
 // exports.allProduct = handlerFactory.getAll(Product);

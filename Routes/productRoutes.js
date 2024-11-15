@@ -115,9 +115,8 @@ router.use("/:productId/reviews", reviewRouter);
 router
   .route("/")
   .get(productController.allProduct)
-  .post(
-    productController.uploadImage, 
-    productController.createProductTest
+  .post( 
+    productController.createProduct
   );
 // Filter products by category
 /**
