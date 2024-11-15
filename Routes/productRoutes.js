@@ -115,8 +115,10 @@ router.use("/:productId/reviews", reviewRouter);
 router
   .route("/")
   .get(productController.allProduct)
-  .post(productController.createProductTest);
-
+  .post(
+    productController.uploadImage, 
+    productController.createProductTest
+  );
 // Filter products by category
 /**
  * @swagger

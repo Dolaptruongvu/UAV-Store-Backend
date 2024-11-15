@@ -5,48 +5,60 @@ const Product = require("../Model/productModel");
 const multer = require("multer");
 const { Op } = require("sequelize");
 const { query } = require("express");
+const path = require("path");
 
 // Cover storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./Public/Img/Products"); // Change 'uploads' to your desired folder path
+    if (file.fieldname === "carouselImage") {
+      cb(null, "./Public/Img/CarouselImages");
+    } else {
+      cb(null, "./Public/Img/Products");
+    }
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}${
-      file.originalname
-    }`;
-    cb(null, uniqueSuffix);
+    // Use slug as filename if provided, or fallback to a generated filename
+    const slug = req.body.slug || `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const ext = path.extname(file.originalname);
+    cb(null, `${slug}${ext}`);
   },
 });
 
 const upload = multer({ storage });
 
-exports.uploadImage = upload.array("images", 1);
+exports.uploadImage = upload.fields([
+  { name: "productImage", maxCount: 1 },
+  { name: "carouselImage", maxCount: 1 },
+]);
 
-// Create product
 exports.createProduct = catchAsync(async (req, res, next) => {
-  let newProductData = {
+  // Generate slug from product name
+  const slug = req.body.name.trim().toLowerCase().replace(/ /g, "-");
+  
+  const newProductData = {
+    slug, // Assign the generated slug
     name: req.body.name,
     manufacturer: req.body.manufacturer,
     category: req.body.category,
-    language: req.body.language,
-    translator: req.body.translator,
-    totalPages: req.body.totalPages,
     releaseDate: req.body.releaseDate,
     supplier: req.body.supplier,
-    coverType: req.body.coverType,
-    weight: req.body.weight,
     quantity: req.body.quantity,
     description: req.body.description,
     ratings: req.body.ratings,
     price: req.body.price,
+    type: JSON.parse(req.body.type),
+    isProminent: req.body.isProminent === "true",
   };
 
-  // Check if image file was uploaded before adding filename
-  if (req.files.length > 0) {
-    newProductData.images = [req.files[0].filename]; // Add filename to images array
+  // Assign image filenames based on slug
+  if (req.files && req.files.productImage && req.files.productImage.length > 0) {
+    newProductData.images = [`${slug}${path.extname(req.files.productImage[0].originalname)}`];
   } else {
-    newProductData.images = []; // Set images to an empty array if no file uploaded
+    newProductData.images = [];
+  }
+
+  if (req.body.isProminent === "true" && req.files && req.files.carouselImage && req.files.carouselImage.length > 0) {
+    newProductData.carouselImage = `${slug}${path.extname(req.files.carouselImage[0].originalname)}`;
   }
 
   const newProduct = await Product.create(newProductData);
