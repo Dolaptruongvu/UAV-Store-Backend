@@ -34,6 +34,7 @@ app.use(
       "http://localhost:5000",
       "https://uav-store-front-end-3nae-nn5s4pl9e-dolaptruongvus-projects.vercel.app",
       "https://uav-store-front-end-6jk6.vercel.app",
+      "https://uav-store-backend.onrender.com",
     ],
     credentials: true,
   })

@@ -1,5 +1,6 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../sequelize");
+const slugify = require("slugify"); // Sử dụng thư viện slugify để tạo slug
 
 class Product extends Model {}
 
@@ -158,6 +159,18 @@ Product.init(
     modelName: "Product",
     tableName: "products",
     timestamps: false,
+    hooks: {
+      beforeCreate: (product) => {
+        if (!product.slug && product.name) {
+          product.slug = slugify(product.name, { lower: true, strict: true });
+        }
+      },
+      beforeUpdate: (product) => {
+        if (!product.slug && product.name) {
+          product.slug = slugify(product.name, { lower: true, strict: true });
+        }
+      },
+    },
   }
 );
 
