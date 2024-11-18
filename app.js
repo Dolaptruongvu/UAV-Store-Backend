@@ -46,66 +46,15 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 // Middleware để xử lý file tĩnh
 app.use(express.static(path.join(__dirname, "public")));
 
-// Chú thích Swagger cho các route chính
-
-/**
- * @swagger
- * /api/v1/products:
- *   get:
- *     summary: Lấy danh sách sản phẩm
- *     tags:
- *       - Products
- *     responses:
- *       200:
- *         description: Thành công, trả về danh sách sản phẩm
- *       500:
- *         description: Lỗi server
- */
 app.use("/api/v1/products", productRoutes);
 
-/**
- * @swagger
- * /api/v1/bill:
- *   get:
- *     summary: Lấy danh sách hóa đơn
- *     tags:
- *       - Bills
- *     responses:
- *       200:
- *         description: Thành công, trả về danh sách hóa đơn
- *       500:
- *         description: Lỗi server
- */
+
 app.use("/api/v1/bill", billRoutes);
 
-/**
- * @swagger
- * /api/v1/customer:
- *   get:
- *     summary: Lấy danh sách khách hàng
- *     tags:
- *       - Customers
- *     responses:
- *       200:
- *         description: Thành công, trả về danh sách khách hàng
- *       500:
- *         description: Lỗi server
- */
+
 app.use("/api/v1/customer", customerRoutes);
 
-/**
- * @swagger
- * /api/v1/reviews:
- *   get:
- *     summary: Lấy danh sách đánh giá
- *     tags:
- *       - Reviews
- *     responses:
- *       200:
- *         description: Thành công, trả về danh sách đánh giá
- *       500:
- *         description: Lỗi server
- */
+
 app.use("/api/v1/reviews", reviewRoutes);
 
 // Route test
