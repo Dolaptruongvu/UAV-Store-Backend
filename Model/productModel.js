@@ -164,10 +164,16 @@ Product.init(
         if (!product.slug && product.name) {
           product.slug = slugify(product.name, { lower: true, strict: true });
         }
+        if (!product.images && product.slug) {
+          product.images = [`${product.slug}.jpg`];
+        }
       },
       beforeUpdate: (product) => {
         if (!product.slug && product.name) {
           product.slug = slugify(product.name, { lower: true, strict: true });
+        }
+        if (!product.images && product.slug) {
+          product.images = [`${product.slug}.jpg`];
         }
       },
     },
