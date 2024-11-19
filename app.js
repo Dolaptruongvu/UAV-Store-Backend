@@ -36,6 +36,7 @@ app.use(
       "https://uav-store-front-end-6jk6.vercel.app",
       "https://uav-store-backend.onrender.com",
     ],
+    methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true,
   })
 );
