@@ -98,8 +98,10 @@ exports.isLoggedIn = async (req, res, next) => {
 
 exports.logout = (req, res) => {
   res.cookie("jwt", "logouttoken", {
-    expires: new Date(Date.now() + 0.001 * 1000),
+    expires: new Date(Date.now()), // Đặt thời gian hết hạn là hiện tại
     httpOnly: true,
+    secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+    sameSite: "none",
   });
   res.status(200).json({
     status: "success",
