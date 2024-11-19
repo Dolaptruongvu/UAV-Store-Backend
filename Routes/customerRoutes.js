@@ -9,6 +9,24 @@ const router = express.Router();
 
 /**
  * @swagger
+ * /customer/me:
+ *   get:
+ *     summary: Lấy thông tin người dùng đã đăng nhập
+ *     tags: [Customers]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Thông tin của người dùng đã đăng nhập
+ *       401:
+ *         description: Không có quyền truy cập
+ */
+router
+  .route("/me")
+  .get(authController.isLoggedIn, customerController.getMeForAuthentication);
+
+/**
+ * @swagger
  * /customer/login:
  *   post:
  *     summary: Đăng nhập người dùng
@@ -180,24 +198,6 @@ router
   .get(customerController.getCustomer)
   .delete(customerController.deleteCustomer)
   .patch(customerController.updatedCustomer);
-
-/**
- * @swagger
- * /customer/me:
- *   get:
- *     summary: Lấy thông tin người dùng đã đăng nhập
- *     tags: [Customers]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Thông tin của người dùng đã đăng nhập
- *       401:
- *         description: Không có quyền truy cập
- */
-router
-  .route("/me")
-  .get(authController.isLoggedIn, customerController.getMeForAuthentication);
 
 /**
  * @swagger
