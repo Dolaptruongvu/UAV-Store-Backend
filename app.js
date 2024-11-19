@@ -35,6 +35,7 @@ app.use(
       "https://uav-store-front-end-3nae-nn5s4pl9e-dolaptruongvus-projects.vercel.app",
       "https://uav-store-front-end-6jk6.vercel.app",
       "https://uav-store-backend.onrender.com",
+      "https://uav-store-backend.onrender.com/api/v1",
     ],
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true,
@@ -49,12 +50,9 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1/products", productRoutes);
 
-
 app.use("/api/v1/bill", billRoutes);
 
-
 app.use("/api/v1/customer", customerRoutes);
-
 
 app.use("/api/v1/reviews", reviewRoutes);
 

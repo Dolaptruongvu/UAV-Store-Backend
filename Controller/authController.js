@@ -23,9 +23,9 @@ const createSendToken = (customer, statusCode, req, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    secure: true,
+    secure: req.secure || req.headers["x-forwarded-proto"] === "https",
   };
-
+  console.log("Generated JWT Token:", token);
   res.cookie("jwt", token, cookieOptions);
 
   customer.password = undefined;
@@ -65,29 +65,29 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.isLoggedIn = async (req, res, next) => {
   try {
-    res.locals.customer = null;
-    console.log("try to access cookies");
+    console.log("Cookies:", req.cookies);
     if (req.cookies.jwt) {
       const decoded = await promisify(jwt.verify)(
         req.cookies.jwt,
         process.env.JWT_SECRET
       );
 
+      console.log("Decoded JWT:", decoded);
+
       const currentUser = await Customer.findByPk(decoded.id);
       if (!currentUser) {
+        console.log("User not found!");
         return next();
       }
 
-      if (currentUser.changedPasswordAfter(decoded.iat)) {
-        return next();
-      }
+      req.customer = currentUser; // Gán đúng user vào req.customer
+      res.locals.customer = currentUser;
 
-      req.customer = currentUser; // Đảm bảo req.customer được gán
-      console.log(req.customer);
-
+      console.log("Authenticated user:", currentUser);
       return next();
     }
   } catch (err) {
+    console.error("JWT verification failed:", err);
     return next();
   }
   next();

@@ -141,16 +141,20 @@ exports.setRoles = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getMeForAuthentication = catchAsync(async (req, res, next) => {
+exports.getMeForAuthentication = (req, res, next) => {
+  // Đảm bảo middleware isLoggedIn đã gán req.customer
   const customer = req.customer;
+
   if (!customer) {
+    // Nếu không tìm thấy khách hàng, trả về lỗi
     return next(new AppError("No customer found with that ID", 404));
   }
 
+  // Trả về thông tin khách hàng
   res.status(200).json({
     status: "success",
     data: {
       customer,
     },
   });
-});
+};
