@@ -10,7 +10,7 @@ const router = express.Router({ mergeParams: true });
  * @swagger
  * /bill:
  *   post:
- *     summary: Tạo hóa đơn mới
+ *     summary: Create a new bill
  *     tags: [Bills]
  *     security:
  *       - bearerAuth: []
@@ -29,17 +29,17 @@ const router = express.Router({ mergeParams: true });
  *                 example: "Payment for order #123"
  *     responses:
  *       201:
- *         description: Hóa đơn đã được tạo thành công
+ *         description: Bill created successfully
  *       401:
- *         description: Không có quyền truy cập
+ *         description: Unauthorized access
  *   get:
- *     summary: Lấy danh sách hóa đơn
+ *     summary: Get the list of bills
  *     tags: [Bills]
  *     responses:
  *       200:
- *         description: Danh sách hóa đơn
+ *         description: List of bills
  *       500:
- *         description: Lỗi server
+ *         description: Server error
  */
 router
   .route("/")
@@ -54,15 +54,15 @@ router
  * @swagger
  * /bill/myShippingBills:
  *   get:
- *     summary: Lấy danh sách hóa đơn giao hàng của shipper
+ *     summary: Get the list of shipping bills for the shipper
  *     tags: [Bills]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Danh sách hóa đơn giao hàng của shipper
+ *         description: List of shipping bills for the shipper
  *       401:
- *         description: Không có quyền truy cập
+ *         description: Unauthorized access
  */
 router
   .route("/myShippingBills")
@@ -76,7 +76,7 @@ router
  * @swagger
  * /bill/setPaymentStatus/{id}:
  *   patch:
- *     summary: Cập nhật trạng thái thanh toán của hóa đơn
+ *     summary: Update the payment status of the bill
  *     tags: [Bills]
  *     security:
  *       - bearerAuth: []
@@ -86,7 +86,7 @@ router
  *         schema:
  *           type: string
  *         required: true
- *         description: ID của hóa đơn
+ *         description: Bill ID
  *     requestBody:
  *       required: true
  *       content:
@@ -99,9 +99,9 @@ router
  *                 example: "Paid"
  *     responses:
  *       200:
- *         description: Trạng thái thanh toán đã được cập nhật
+ *         description: Payment status updated successfully
  *       404:
- *         description: Không tìm thấy hóa đơn
+ *         description: Bill not found
  */
 router
   .route("/setPaymentStatus/:id")
@@ -115,7 +115,7 @@ router
  * @swagger
  * /bill/checkout-session/{id}:
  *   get:
- *     summary: Tạo session thanh toán cho người dùng
+ *     summary: Create a payment session for the user
  *     tags: [Bills]
  *     security:
  *       - bearerAuth: []
@@ -125,14 +125,14 @@ router
  *         schema:
  *           type: string
  *         required: true
- *         description: ID của hóa đơn
+ *         description: Bill ID
  *     responses:
  *       200:
- *         description: Session thanh toán đã được tạo
+ *         description: Payment session created
  *       401:
- *         description: Không có quyền truy cập
+ *         description: Unauthorized access
  *       404:
- *         description: Không tìm thấy hóa đơn
+ *         description: Bill not found
  */
 router.get(
   "/checkout-session/:id",
@@ -145,7 +145,7 @@ router.get(
  * @swagger
  * /bill/update-pay/{billId}:
  *   post:
- *     summary: Cập nhật thanh toán cho hóa đơn
+ *     summary: Update payment for the bill
  *     tags: [Bills]
  *     security:
  *       - bearerAuth: []
@@ -155,7 +155,7 @@ router.get(
  *         schema:
  *           type: string
  *         required: true
- *         description: ID của hóa đơn
+ *         description: Bill ID
  *     requestBody:
  *       required: true
  *       content:
@@ -168,11 +168,11 @@ router.get(
  *                 example: "Completed"
  *     responses:
  *       200:
- *         description: Trạng thái thanh toán đã được cập nhật
+ *         description: Payment status updated
  *       401:
- *         description: Không có quyền truy cập
+ *         description: Unauthorized access
  *       404:
- *         description: Không tìm thấy hóa đơn
+ *         description: Bill not found
  */
 router.post(
   "/update-pay/:billId",

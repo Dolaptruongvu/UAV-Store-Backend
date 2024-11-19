@@ -13,15 +13,15 @@ router.use("/:productId/reviews", reviewRouter);
  * @swagger
  * /products:
  *   get:
- *     summary: Lấy danh sách tất cả sản phẩm
+ *     summary: Get the list of all products
  *     tags: [Products]
  *     responses:
  *       200:
- *         description: Danh sách các sản phẩm
+ *         description: List of products
  *       500:
- *         description: Lỗi server
+ *         description: Server error
  *   post:
- *     summary: Tạo mới một sản phẩm
+ *     summary: Create a new product
  *     tags: [Products]
  *     requestBody:
  *       required: true
@@ -108,22 +108,21 @@ router.use("/:productId/reviews", reviewRouter);
  *                     example: "Includes additional batteries, a carrying bag, and extra propellers for extended flights."
  *     responses:
  *       201:
- *         description: Sản phẩm được tạo thành công
+ *         description: Product created successfully
  *       500:
- *         description: Lỗi server
+ *         description: Server error
  */
 router
   .route("/")
   .get(productController.allProduct)
-  .post( 
-    productController.createProduct
-  );
+  .post(productController.createProduct);
+
 // Filter products by category
 /**
  * @swagger
  * /products/filter:
  *   get:
- *     summary: Lọc sản phẩm theo danh mục
+ *     summary: Filter products by category
  *     tags: [Products]
  *     parameters:
  *       - in: query
@@ -131,14 +130,14 @@ router
  *         schema:
  *           type: string
  *         required: true
- *         description: Danh mục sản phẩm để lọc
+ *         description: Product category to filter by
  *     responses:
  *       200:
- *         description: Danh sách sản phẩm sau khi lọc
+ *         description: Filtered list of products
  *       400:
- *         description: Tham số không hợp lệ
+ *         description: Invalid parameter
  *       500:
- *         description: Lỗi server
+ *         description: Server error
  */
 router.get("/filter", productController.filterProductsByCategory);
 
@@ -147,13 +146,13 @@ router.get("/filter", productController.filterProductsByCategory);
  * @swagger
  * /products/top3Products:
  *   get:
- *     summary: Lấy top 3 sản phẩm
+ *     summary: Get the top 3 products
  *     tags: [Products]
  *     responses:
  *       200:
- *         description: Danh sách top 3 sản phẩm
+ *         description: Top 3 products list
  *       500:
- *         description: Lỗi server
+ *         description: Server error
  */
 router.route("/top3Products").get(productController.top3Products);
 
@@ -166,7 +165,7 @@ router.use(restrictTo("admin"));
  * @swagger
  * /products/{id}:
  *   get:
- *     summary: Lấy thông tin chi tiết của một sản phẩm
+ *     summary: Get detailed information of a product
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -174,14 +173,14 @@ router.use(restrictTo("admin"));
  *         required: true
  *         schema:
  *           type: string
- *         description: ID của sản phẩm
+ *         description: Product ID
  *     responses:
  *       200:
- *         description: Thông tin chi tiết của sản phẩm
+ *         description: Detailed information of the product
  *       404:
- *         description: Không tìm thấy sản phẩm
+ *         description: Product not found
  *   patch:
- *     summary: Cập nhật thông tin của một sản phẩm
+ *     summary: Update product information
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -189,7 +188,7 @@ router.use(restrictTo("admin"));
  *         required: true
  *         schema:
  *           type: string
- *         description: ID của sản phẩm
+ *         description: Product ID
  *     requestBody:
  *       required: true
  *       content:
@@ -205,13 +204,13 @@ router.use(restrictTo("admin"));
  *                 example: 2200
  *     responses:
  *       200:
- *         description: Sản phẩm đã được cập nhật
+ *         description: Product updated successfully
  *       400:
- *         description: Dữ liệu không hợp lệ
+ *         description: Invalid data
  *       404:
- *         description: Không tìm thấy sản phẩm
+ *         description: Product not found
  *   delete:
- *     summary: Xóa một sản phẩm
+ *     summary: Delete a product
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -219,12 +218,12 @@ router.use(restrictTo("admin"));
  *         required: true
  *         schema:
  *           type: string
- *         description: ID của sản phẩm
+ *         description: Product ID
  *     responses:
  *       204:
- *         description: Sản phẩm đã bị xóa
+ *         description: Product deleted
  *       404:
- *         description: Không tìm thấy sản phẩm
+ *         description: Product not found
  */
 router
   .route("/:id")

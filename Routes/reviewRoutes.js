@@ -12,7 +12,7 @@ const router = express.Router({ mergeParams: true });
  * @swagger
  * /reviews:
  *   post:
- *     summary: Tạo mới một đánh giá
+ *     summary: Create a new review
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -28,23 +28,23 @@ const router = express.Router({ mergeParams: true });
  *                 example: 5
  *               comment:
  *                 type: string
- *                 example: "Sản phẩm tuyệt vời!"
+ *                 example: "Great product!"
  *               productId:
  *                 type: string
  *                 example: "prod12345"
  *     responses:
  *       201:
- *         description: Đánh giá đã được tạo thành công
+ *         description: Review created successfully
  *       401:
- *         description: Không có quyền truy cập
+ *         description: Unauthorized access
  *   get:
- *     summary: Lấy danh sách tất cả các đánh giá
+ *     summary: Get the list of all reviews
  *     tags: [Reviews]
  *     responses:
  *       200:
- *         description: Danh sách các đánh giá
+ *         description: List of reviews
  *       500:
- *         description: Lỗi server
+ *         description: Server error
  */
 router
   .route("/")
@@ -59,7 +59,7 @@ router
  * @swagger
  * /reviews/{id}:
  *   get:
- *     summary: Lấy thông tin chi tiết của một đánh giá
+ *     summary: Get detailed information of a review
  *     tags: [Reviews]
  *     parameters:
  *       - in: path
@@ -67,14 +67,14 @@ router
  *         schema:
  *           type: string
  *         required: true
- *         description: ID của đánh giá
+ *         description: Review ID
  *     responses:
  *       200:
- *         description: Thông tin chi tiết của đánh giá
+ *         description: Detailed information of the review
  *       404:
- *         description: Không tìm thấy đánh giá
+ *         description: Review not found
  *   delete:
- *     summary: Xóa một đánh giá
+ *     summary: Delete a review
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -84,14 +84,14 @@ router
  *         schema:
  *           type: string
  *         required: true
- *         description: ID của đánh giá
+ *         description: Review ID
  *     responses:
  *       204:
- *         description: Đánh giá đã bị xóa
+ *         description: Review deleted
  *       404:
- *         description: Không tìm thấy đánh giá
+ *         description: Review not found
  *   patch:
- *     summary: Cập nhật thông tin của một đánh giá
+ *     summary: Update information of a review
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -101,7 +101,7 @@ router
  *         schema:
  *           type: string
  *         required: true
- *         description: ID của đánh giá
+ *         description: Review ID
  *     requestBody:
  *       required: true
  *       content:
@@ -114,14 +114,14 @@ router
  *                 example: 4
  *               comment:
  *                 type: string
- *                 example: "Đánh giá tốt nhưng còn một số điểm cần cải thiện."
+ *                 example: "Good review but some points need improvement."
  *     responses:
  *       200:
- *         description: Đánh giá đã được cập nhật
+ *         description: Review updated successfully
  *       400:
- *         description: Dữ liệu không hợp lệ
+ *         description: Invalid data
  *       404:
- *         description: Không tìm thấy đánh giá
+ *         description: Review not found
  */
 router
   .route("/:id")
