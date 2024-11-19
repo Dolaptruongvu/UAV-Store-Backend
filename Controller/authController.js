@@ -24,6 +24,7 @@ const createSendToken = (customer, statusCode, req, res) => {
     ),
     httpOnly: true,
     secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+    sameSite: "none",
   };
   console.log("Generated JWT Token:", token);
   res.cookie("jwt", token, cookieOptions);
@@ -65,22 +66,24 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.isLoggedIn = async (req, res, next) => {
   try {
-    console.log("Cookies:", req.cookies);
+    // Kiểm tra xem cookie jwt có tồn tại không
+    console.log("Cookies received:", req.cookies);
     if (req.cookies.jwt) {
       const decoded = await promisify(jwt.verify)(
         req.cookies.jwt,
         process.env.JWT_SECRET
       );
 
-      console.log("Decoded JWT:", decoded);
+      console.log("Decoded JWT:", decoded); // Log JWT đã được giải mã
 
+      // Tìm khách hàng theo ID từ JWT
       const currentUser = await Customer.findByPk(decoded.id);
       if (!currentUser) {
         console.log("User not found!");
-        return next();
+        return next(new AppError("User not found", 404));
       }
 
-      req.customer = currentUser; // Gán đúng user vào req.customer
+      req.customer = currentUser; // Gán thông tin khách hàng vào req
       res.locals.customer = currentUser;
 
       console.log("Authenticated user:", currentUser);
@@ -88,7 +91,7 @@ exports.isLoggedIn = async (req, res, next) => {
     }
   } catch (err) {
     console.error("JWT verification failed:", err);
-    return next();
+    return next(new AppError("Failed to authenticate user", 401));
   }
   next();
 };
