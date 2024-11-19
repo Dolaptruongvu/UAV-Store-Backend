@@ -24,7 +24,6 @@ const createSendToken = (customer, statusCode, req, res) => {
     ),
     httpOnly: true,
     secure: true,
-    sameSite: "lax",
   };
 
   res.cookie("jwt", token, cookieOptions);
